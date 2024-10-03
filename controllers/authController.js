@@ -10,7 +10,11 @@ module.exports.registerUser = async function(req, res) {          // ➡️ Path
         let {email, password, fullname} = req.body
 
         let user = await userModel.findOne({email: email})
-        if (user) return res.status(401).send("You already have an account, Please login.")
+        // if (user) return res.status(401).send("You already have an account, Please login.")
+        if (user){
+            req.flash("error", "You already have an account, Please login.")
+            return res.redirect("/")
+        } 
 
         bcrypt.genSalt(10, function(err, salt){
             bcrypt.hash(password, salt, async function(err, hash){
@@ -47,7 +51,7 @@ module.exports.loginUser = async function(req, res) {
         if (result){
             let token = generateToken(user)
             res.cookie("token", token)
-            res.send("You can login")
+            res.redirect("/shop")
         }
         else{
             return res.send("Email or Password incorrect")
@@ -55,3 +59,8 @@ module.exports.loginUser = async function(req, res) {
     })
 };
 
+
+module.exports.logoutUser = function (req, res){
+    res.cookie("token", "")
+    res.redirect("/")
+}
