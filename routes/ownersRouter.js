@@ -9,7 +9,8 @@ if( process.env.NODE_ENV === "development"){
         // ➡️ Code for Not more than one Owner....
         let owners = await ownerModel.find();
         if(owners.length > 0){
-            return res.status(503).send("You don't have permission to create a new owner")
+            // return res.status(503).send("You don't have permission to create a new owner")
+            return res.status(503).render("permission-denied")
         }
 
         let {fullname, email, password} = req.body
@@ -19,7 +20,8 @@ if( process.env.NODE_ENV === "development"){
             email: email,
             password: password
         })
-        res.status(201).send(createdOwner)
+        // res.status(201).send(createdOwner)
+        res.status(201).render("show-created-owner")
         // res.send("We can create a new Owner")
     })
 }
@@ -28,6 +30,11 @@ if( process.env.NODE_ENV === "development"){
 router.get("/admin", function(req, res){
     let success = req.flash("success")
     res.render("createproducts", { success })
+})
+
+router.get("/", function(req, res){
+    // let success = req.flash("success")
+    res.render("owner-login")
 })
 
 
